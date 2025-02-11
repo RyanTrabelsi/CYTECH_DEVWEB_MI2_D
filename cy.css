@@ -16,7 +16,7 @@ body {
   position: absolute; 
   left: 0;
   font-size: 20px;
-  
+    font-family: 'Scheherazade', serif;
 
     
    
@@ -26,6 +26,7 @@ body {
       position: absolute;  
   right:10%;
   font-size: 20px;
+    font-family: 'Scheherazade', serif;
 }
 
 
@@ -40,7 +41,7 @@ body {
 
 .img2 {
     position: absolute;
-    top:  165px;
+    top:  180px;
     left: 60%;
 
     width: 80px;
@@ -80,14 +81,25 @@ body {
     border: 2px solid #ddd;
     border-radius: 10px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-
+    background-color:#eaaa37;
   font-size: 20px;
-          
+           
          
 
     }
     
     
+    
+       
+        table {
+         width: 50%;
+    margin: auto;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+  
     .ligne {
     width: 90%;  /* Longueur de la ligne */
 ;  /* Épaisseur */
@@ -202,6 +214,8 @@ p {
     align-items: center;
     justify-content:space-evenly;
     margin: 10px 0;
+      font-family: 'Scheherazade', serif;
+      color: black;
 }
 
 
@@ -211,7 +225,7 @@ p {
 .ligne {
     border: none;
     height: 1px;
-    background-color: #ccc;
+    background-color: #9C9998   ;
     margin: 10px 0;
 }
 

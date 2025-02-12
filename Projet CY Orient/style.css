@@ -1,0 +1,233 @@
+@import url(https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap);
+@font-face {
+  font-family: 'PersiaFont';
+  src: url('fonts/persia.ttf') format('opentype');
+}
+
+* {
+    font-family:  'Montserrat', sans-serif;;
+}
+
+
+html {
+  height: 100%;
+  width: 100%;
+}
+body{
+  margin: 0 auto;
+  background-color:white;
+}
+header.header{
+  display: flex;
+  align-items: center;
+  background-color:#640610;
+  padding: 20px;
+}
+header.header img{
+  width: 100px;
+}
+
+nav.nav1 {
+  color:  white;
+  display: flex; 
+  justify-content: space-between;  
+  list-style: none;
+  width:600px;
+  margin-left:60px;
+  margin-right: auto;
+
+}
+nav.nav1 li{
+  font-family: 'PersiaFont', sans-serif;
+}
+nav.nav1 li:hover{
+  font-family: 'PersiaFont', sans-serif;
+  transform:scale(1.1);
+  transition: 0.3s all;
+}
+
+header.header input{
+  font-family: 'PersiaFont', sans-serif;
+  background: linear-gradient(45deg, #9d3f3a, #cc175c93);
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  font-size: 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+#background-video {
+  height: 100vh;
+  width: 100vw;
+  object-fit: cover;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: -1;
+}
+
+.big-title{
+  color:black;
+  font-size:50px;
+  text-align: center;
+  font-family: 'PersiaFont', sans-serif;
+
+}
+.slogan{
+  justify-content: center;
+  text-align: center;
+}
+
+
+/* Formulaire de recherche*/
+.forms{
+  display: flex;
+  background-color: #eaaa37;
+  margin-right: 50px;
+  margin-left: 50px;
+  padding: 10px;
+  border-radius:20px;
+}
+.select1{
+  display: flex;
+  justify-content: left;
+  padding: 10px;
+  flex-direction: row;
+  border:none;
+  
+}
+
+.select1 select{
+  appearance: none; /* Supprime le style par défaut */
+  background-color: #f8f8f8; /* Fond clair */
+  border: 2px solid #3498db; /* Bordure bleue */
+  border-radius: 10px; /* Coins arrondis */
+  padding: 5px; /* Espacement interne */
+  font-size: inherit; /* Garde la taille du texte d'origine */
+  color: #333;
+}
+
+
+.form-group{
+  justify-content: center;
+  flex-direction: row;
+}
+.form-group select, input, option{
+  appearance: none; /* Supprime le style par défaut */
+  background-color: #f8f8f8; /* Fond clair */
+  border: 2px solid #3498db;  /* Bordure bleue */
+  border-radius: 10px; /* Coins arrondis */
+  padding: 5px; /* Espacement interne */
+  font-size: inherit; /* Garde la taille du texte d'origine */
+  color: #333;
+}
+.form-group label{
+  margin: 5px;
+  padding: 5px;
+}
+
+.form-submit{
+  text-align: center;
+  padding: 10px; 
+}
+
+.form-submit input{
+  font-family: 'PersiaFont', sans-serif;
+  background: linear-gradient(45deg, #9d3f3a, #cc175c93);
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  font-size: 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+
+.form-submit input:hover{
+  transform:scale(1.1);
+  transition: 0.3s all;
+}
+
+/*Destination*/
+.overlay { 
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+}
+
+section#destinations {
+  margin: 0px 20% 0 20%;
+}
+
+section#destinations h3 {
+  padding-top: 50px;
+  opacity: 0.5;
+  color: #373737;
+}
+
+span.nom {
+  font-family: 'PersiaFont', sans-serif;
+  position: relative;
+  color: #373737;
+  background-color: #eaaa37;
+  bottom: auto;
+  float: right;
+  padding: 9px;
+  font-size: 15px;
+}
+
+span.prix {
+  position: relative;
+  background-color: #eaaa37;
+  padding: 9px;
+  font-size: 15px;
+  float: right;
+}
+
+div.destination-item {
+  color: #373737;
+  height: 150px;
+  margin: 15px;
+  position: relative;
+  flex: 1 0 29%;
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+
+div.destination-item:hover {
+  transform: scale(0.98);
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.6), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  transition: 0.2s all;
+}
+
+div.destinations-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.oujda { background: url(image/oujda.jpg); }
+.dubai { background: url(image/dubai.jpg); }
+.mascate { background: url(image/mascate.jpg); }
+.khartoum { background: url(image/khartoum.jpg); }
+.djerba { background: url(image/djerba.jpg); }
+.le_caire { background: url(image/le_caire.jpg); }
+
+footer {
+  background-color: #640610;
+  color: white; 
+  padding: 15px 0;
+  width: 100%; 
+  bottom: 0;
+  margin-left: 20px;
+}

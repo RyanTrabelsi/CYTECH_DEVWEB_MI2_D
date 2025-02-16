@@ -44,7 +44,7 @@ body{
   font-family: 'PersiaFont', sans-serif;
 }
 
-.container {
+.container1 {
   padding: 20px;
   background-color: antiquewhite;
   position: relative;
@@ -597,6 +597,106 @@ margin-right: 50px;
   height: 1px;
   background-color: #9C9998 ;
   margin: 10px 0;
+}
+
+body.user-list {
+  margin: 0;
+  padding: 0;
+  background-color: antiquewhite;
+  
+.mef{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+}
+
+.container {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 800px;
+}
+.container h2 {
+  margin-top: 0;
+  text-align: center;
+}
+.account-list {
+  margin-top: 20px;
+}
+.account-item {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+.account-item:last-child {
+  border-bottom: none;
+}
+.account-item h3 {
+  margin: 0;
+  font-size: 1.2em;
+}
+.account-item p {
+  margin: 5px 0 0;
+  color: #555;
+}
+body.sign{
+  font-family: Comic Sans MS, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: antiquewhite;
+  height: 100vh;
+}
+.sign-in{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ 
+}
+.form-container {
+  background: white;
+  margin-top: 100px;
+  padding: 50px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  text-align: center;
+}
+.form-container h2 {
+  margin-top: 0;
+}
+.form-group1 {
+  margin-bottom: 15px;
+}
+.form-group1 label {
+  display: block;
+  margin-bottom: 5px;
+}
+.form-group1 input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+.form-group1 input[type="radio"] {
+  width: auto;
+}
+.form-group1 button {
+  padding: 10px 15px;
+  background-color: brown;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.form-group1 button:hover {
+  background-color: brown;
+}
+.form-container img {
+  width: 150px;
+  height: auto;
+  margin-bottom: 20px;
 }
 
 

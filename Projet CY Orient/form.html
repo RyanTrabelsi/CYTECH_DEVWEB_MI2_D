@@ -1,92 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CY Orient - Sign up</title>
-    <style>
-        body {
-            font-family: Comic Sans MS, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: antiquewhite;
-        }
-        .form-container {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            text-align: center;
-        }
-        .form-container h2 {
-            margin-top: 0;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-        .form-group input[type="radio"] {
-            width: auto;
-        }
-        .form-group button {
-            padding: 10px 15px;
-            background-color: brown;
-            border: none;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .form-group button:hover {
-            background-color: brown;
-        }
-        .form-container img {
-            width: 150px;
-            height: auto;
-            margin-bottom: 20px;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="style.css"> 
+        
 </head>
-<body>
+<body class="sign">
+    <section class="top-page">
+        <header class="header">
+          <img src="image/logo.png">
+          <nav class="nav1">
+            <li><a href="accueil.html">Accueil</a></li>
+            <li><a href="presentation.html">Présentation</a></li>
+            <li><a href="reserver.html">Réserver</a></li>
+            <li><a href="profil.html">Mon compte</a></li>
+          </nav>
+          <input type="submit" value="Se connecter" name="connexion" id="connexion" onclick="window.location.href='login_form.html';">
+        </header>
+      </section>
+    <div class="sign-in">
     <div class="form-container">
         <img src="image/logo2.png" alt="Logo">
-        <h2>Sign up</h2>
+        <h2>S'inscrire</h2>
         <form action="accueil.html" method="get">
-            <div class="form-group">
-                <label for="first-name">First name</label>
+            <div class="form-group1">
+                <label for="first-name">Nom</label>
                 <input type="text" id="first-name" name="first-name" required>
             </div>
-            <div class="form-group">
-                <label for="last-name">Last name</label>
+            <div class="form-group1">
+                <label for="last-name">Prénom</label>
                 <input type="text" id="last-name" name="last-name" required>
             </div>
-            <div class="form-group">
+            <div class="form-group1">
                 <label>Contact</label><br>
                 <input type="radio" id="email" name="contact" value="email" required>
                 <label for="email">Email</label><br>
                 <input type="radio" id="phone" name="contact" value="phone">
-                <label for="phone">Phone Number</label>
+                <label for="phone">Numéro de téléphone</label>
             </div>
-            <div class="form-group">
-                <label for="contact-info">Email or Phone Number</label>
+            <div class="form-group1">
+                <label for="contact-info">Email ou Numéro de téléphone</label>
                 <input type="text" id="contact-info" name="contact-info" required>
             </div>
-            <div class="form-group">
-                <button type="submit">Sign up</button>
+            <div class="form-group1">
+                <button type="submit">S'inscrire</button>
             </div>
         </form>
     </div>
+</div>
 </body>
 </html>

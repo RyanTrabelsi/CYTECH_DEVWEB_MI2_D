@@ -4,50 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CY Orient - User Accounts</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: antiquewhite;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 800px;
-        }
-        .container h2 {
-            margin-top: 0;
-            text-align: center;
-        }
-        .account-list {
-            margin-top: 20px;
-        }
-        .account-item {
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
-        }
-        .account-item:last-child {
-            border-bottom: none;
-        }
-        .account-item h3 {
-            margin: 0;
-            font-size: 1.2em;
-        }
-        .account-item p {
-            margin: 5px 0 0;
-            color: #555;
-        }
-    </style>
+    <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
-<body>
+<body class="user-list">
+    <section class="top-page">
+        <header class="header">
+          <img src="image/logo.png">
+          <nav class="nav1">
+            <li><a href="accueil.html">Accueil</a></li>
+            <li><a href="presentation.html">Présentation</a></li>
+            <li><a href="reserver.html">Réserver</a></li>
+            <li><a href="profil.html">Mon compte</a></li>
+          </nav>
+          <input type="submit" value="Liste d'utilisateurs" name="user-list" id="user-list" onclick="window.location.href='user_list.html';">
+          <input type="submit" value="Se connecter" name="connexion" id="connexion" onclick="window.location.href='login_form.html';">
+        </header>
+      </section>
+    <div class="mef">
     <div class="container">
         <h2>Liste des Comptes Inscrits</h2>
         <div class="account-list" id="account-list">
@@ -94,5 +67,6 @@
             displayAccounts(userAccounts);
         };
     </script>
+    </div>
 </body>
 </html>

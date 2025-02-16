@@ -364,9 +364,18 @@ div.present{
 h1.intro-title{
   color:black;
   font-size:50px;
-  text-align: center;
+  text-align:start;
   font-family: 'PersiaFont', sans-serif;
+  padding: 20px;
 }
+h1.intro-title2{
+  color:black;
+  font-size:50px;
+  text-align: end;
+  font-family: 'PersiaFont', sans-serif;
+  padding: 20px;
+}
+
 
 h2.intro{
   color:black;
@@ -397,6 +406,7 @@ h2.intro{
   }
 
   .tooltip {
+    font-family: 'PersiaFont', sans-serif;
     visibility: hidden;
     width: 200px;
     background: black;
@@ -404,14 +414,15 @@ h2.intro{
     text-align: center;
     padding: 5px;
     border-radius: 5px;
-
     position: absolute;
-    bottom: 60px;
     left: 50%;
     transform: translateX(-50%);
-    
     opacity: 0;
     transition: opacity 0.3s;
+  }
+  .tooltip img{
+    width: 200px;
+    
   }
 
   .hotspot:hover .tooltip {

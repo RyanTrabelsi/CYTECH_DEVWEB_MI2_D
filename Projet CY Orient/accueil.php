@@ -36,9 +36,9 @@ try {
           <img src="image/logo.png">
           <nav class="nav1">
             <li><a href="accueil.php">Accueil</a></li>
-            <li><a href="presentation.html">Présentation</a></li>
-            <li><a href="reserver.html">Réserver</a></li>
-            <li><a href="profil.html">Mon compte</a></li>
+            <li><a href="presentation.php">Présentation</a></li>
+            <li><a href="reserver.php">Réserver</a></li>
+            <li><a href="profil.php">Mon compte</a></li>
           </nav>
           <?php if(!isset($_SESSION['user_id'])): ?>
               <input type="submit" value="S'inscrire" name="inscription" id="inscription" onclick="window.location.href='form.php';">

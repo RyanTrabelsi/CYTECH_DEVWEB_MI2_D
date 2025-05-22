@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fibonacci</title>
+    <style>
+        .fiboresult {
+            background: brown;
+            border: 1px dotted yellow;
+            color: orange;
+            text-align: center;
+        }
+        .bold { 
+            font-weight: bold; 
+            font-size: large; 
+        }
+        .italic { 
+            font-style: italic; 
+        }
+    </style>
+</head>
+<body>
+    <p id="test">Al salam aleykoum!</p>
+    <div id="output" class="fiboresult"></div>
+    <script>
+        document.getElementById('test').style.textAlign = 'center';
+        function fibonacci(n) {
+            let a = 0, b = 1;
+            if (n === 0) return a;
+            for (let i = 2; i <= n; i++) [a, b] = [b, a + b];
+            return b;
+        }
+
+        const n = parseInt(prompt("Enter Fibonacci term number:"));
+        if (!isNaN(n)) {
+            const now = new Date();
+            const time = `${now.getHours()}:${now.getMinutes().toString().padStart(2,'0')}`;
+            document.getElementById('output').innerHTML = 
+                `At ${time}, the <span class="italic">${n}</span>th term of the Fibonacci sequence is <span class="bold">${fibonacci(n)}</span>`;
+        }
+    </script>
+</body>
+</html>

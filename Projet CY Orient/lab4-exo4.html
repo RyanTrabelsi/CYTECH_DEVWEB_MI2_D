@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Hover Exo4</title>
+    <style>
+        img { 
+            width: 500px; 
+            transition: 0.3s; 
+        }
+    </style>
+</head>
+<body>
+    <script>
+        document.body.style.textAlign = 'center';
+        
+        const pic = document.createElement('img');
+        pic.src = "image/trips/oujda.jpg";
+        pic.alt = "Eh bah non, Tunisia first!";
+        
+        pic.addEventListener('mouseenter', () => pic.src = "image/trips/djerba.jpg");
+        pic.addEventListener('mouseleave', () => pic.src = "image/trips/oujda.jpg");
+        
+        document.body.appendChild(pic);
+        
+        function showInfo() {
+            alert("Tunisia Forever!\nCurrent time: " + new Date().toLocaleTimeString());
+        }
+        
+        const btn = document.createElement('button');
+        btn.textContent = 'Tunisia Goats!';
+        
+        btn.addEventListener('click', showInfo);
+        
+        document.body.appendChild(btn);
+    </script>
+</body>
+</html>

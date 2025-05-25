@@ -3,6 +3,12 @@
 session_start();
 require_once 'db_connect.php';
 
+// Verify admin status (you should add proper admin verification)
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
+    header('Location: accueil.php');
+    exit();
+}
+
 // Fetch 6 random trips from database
 try {
     $stmt = $pdo->query("SELECT * FROM trips ORDER BY RAND() LIMIT 6");
@@ -18,7 +24,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CY Orient</title>
+    <title>CY Orient - Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
     <link href="style.css" rel="stylesheet" type="text/css" />
@@ -149,32 +155,45 @@ try {
             display: flex;
             animation: slideUp 0.3s ease forwards;
         }
+        
+        /* Admin button style */
+        .admin-button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-right: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .admin-button:hover {
+            background-color: #c0392b;
+        }
     </style>
 </head>
 <body>
     <section class="top-page">
         <header class="header">
-    <img src="image/logo.png" alt="Logo">
-    <nav class="nav1">
-        <li><a href="accueil.php">Accueil</a></li>
-        <li><a href="presentation.php">Présentation</a></li>
-        <li><a href="reserver.php">Réserver</a></li>
-        <li><a href="profil.php">Mon compte</a></li>
-    </nav>
-    <?php if(isset($_SESSION['user_id'])): ?>
-        <?php if($_SESSION['contact_type'] === 'admin'): ?>
-            <input type="button" class="admin-button" value="Liste des utilisateurs" onclick="window.location.href='userlist.php';">
-        <?php endif; ?>
-        <input type="submit" value="Se déconnecter" name="logout" id="logout" onclick="window.location.href='logout.php';">
-    <?php else: ?>
-        <input type="submit" value="S'inscrire" name="inscription" id="inscription" onclick="window.location.href='form.php';">
-        <input type="submit" value="Se connecter" name="connexion" id="connexion" onclick="window.location.href='login_form.php';">
-    <?php endif; ?>
-</header>
+          <img src="image/logo.png">
+          <nav class="nav1">
+            <li><a href="admin_accueil.php">Accueil</a></li>
+            <li><a href="presentation.php">Présentation</a></li>
+            <li><a href="reserver.php">Réserver</a></li>
+            <li><a href="profil.php">Mon compte</a></li>
+          </nav>
+          <?php if(isset($_SESSION['user_id'])): ?>
+              <input type="button" class="admin-button" value="Liste des utilisateurs" onclick="window.location.href='userlist.php';">
+              <input type="submit" value="Se déconnecter" name="logout" id="logout" onclick="window.location.href='logout.php';">
+          <?php endif; ?>
+        </header>
       </section>
     <div class="container1">
         <div class="landing-page">
-            <h1 class="big-title" style="font-family: Comic Sans MS">CY ORIENT</h1>
+            <h1 class="big-title" style="font-family: Comic Sans MS">CY ORIENT - ADMIN</h1>
             <h1 class="big-title">Découvrez les plus beaux pays du monde</h1>
         </div>
         <section id="destinations2">
@@ -230,37 +249,29 @@ try {
         
         // Send message function
         function sendMessage() {
-    const userInput = document.getElementById('userInput');
-    const message = userInput.value.trim();
-
-    if (message) {
-        addMessage(message, 'user-message');
-        userInput.value = '';
-        
-        const context = "CY Orient est une plateforme de voyage spécialisée dans les destinations orientales, notamment l'Égypte, la Jordanie, et les Émirats arabes unis.";
-        // Send to Flask API
-        fetch('http://127.0.0.1:5000/chat', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-                question: message, 
-                context: context 
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-    const botReply = data.answer || "Désolé, une erreur est survenue.";
-    addMessage(botReply, 'bot-message');
-})
-        .catch(error => {
-            console.error('Error:', error);
-            addMessage("Erreur de communication avec le serveur.", 'bot-message');
-        });
-    }
-}
-
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+            
+            if (message) {
+                // Add user message to chat
+                addMessage(message, 'user-message');
+                userInput.value = '';
+                
+                // Here you would typically send the message to your chatbot backend
+                // For now, we'll just simulate a bot response
+                setTimeout(() => {
+                    const botResponses = [
+                        "Je comprends votre demande. Pourriez-vous me donner plus de détails ?",
+                        "Je peux vous aider avec les réservations, les informations sur les voyages, et plus encore !",
+                        "Désolé, je n'ai pas compris. Pouvez-vous reformuler votre question ?",
+                        "Pour les réservations, veuillez visiter notre page 'Réserver'.",
+                        "Merci pour votre message. Un de nos conseillers vous répondra bientôt."
+                    ];
+                    const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
+                    addMessage(randomResponse, 'bot-message');
+                }, 1000);
+            }
+        }
         
         // Handle Enter key press
         function handleKeyPress(event) {

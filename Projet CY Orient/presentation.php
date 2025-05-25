@@ -14,20 +14,23 @@ session_start();
 <body>
   <section class="top-page">
     <header class="header">
-      <img src="image/logo.png">
-      <nav class="nav1">
+    <img src="image/logo.png" alt="Logo">
+    <nav class="nav1">
         <li><a href="accueil.php">Accueil</a></li>
         <li><a href="presentation.php">Présentation</a></li>
         <li><a href="reserver.php">Réserver</a></li>
         <li><a href="profil.php">Mon compte</a></li>
-      </nav>
-      <?php if (isset($_SESSION['user_id'])): ?>
-        <input type="submit" value="Se déconnecter" name="deconnexion" id="deconnexion" onclick="window.location.href='logout.php';">
-      <?php else: ?>
+    </nav>
+    <?php if(isset($_SESSION['user_id'])): ?>
+        <?php if($_SESSION['contact_type'] === 'admin'): ?>
+            <input type="button" class="admin-button" value="Liste des utilisateurs" onclick="window.location.href='userlist.php';">
+        <?php endif; ?>
+        <input type="submit" value="Se déconnecter" name="logout" id="logout" onclick="window.location.href='logout.php';">
+    <?php else: ?>
         <input type="submit" value="S'inscrire" name="inscription" id="inscription" onclick="window.location.href='form.php';">
         <input type="submit" value="Se connecter" name="connexion" id="connexion" onclick="window.location.href='login_form.php';">
-      <?php endif; ?>
-    </header>
+    <?php endif; ?>
+</header>
   </section>
   <video id="background-video" autoplay loop muted>
     <source src="image/back.mp4" type="video/mp4">

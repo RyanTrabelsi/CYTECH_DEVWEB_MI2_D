@@ -19,8 +19,8 @@ if ($conn->connect_error) {
 $contact_info = $_POST['contact_info'];
 $password = $_POST['password'];
 
-// Fetch user from the database
-$sql = "SELECT id, password FROM users WHERE contact_info = ?";
+// Fetch user from the database (including contact_type)
+$sql = "SELECT id, password, contact_type FROM users WHERE contact_info = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $contact_info);
 $stmt->execute();
@@ -28,7 +28,7 @@ $stmt->store_result();
 
 // Check if a user was found
 if ($stmt->num_rows > 0) {
-    $stmt->bind_result($id, $hashed_password);
+    $stmt->bind_result($id, $hashed_password, $contact_type);
     $stmt->fetch();
 
     // Verify the password
@@ -36,9 +36,14 @@ if ($stmt->num_rows > 0) {
         // Password is correct, start a session
         $_SESSION['user_id'] = $id;
         $_SESSION['contact_info'] = $contact_info;
+        $_SESSION['contact_type'] = $contact_type; // Store the user type in session
 
-        // Redirect to the home page
-        header("Location: accueil.php");
+        // Redirect based on user type
+        if ($contact_type === 'admin') {
+            header("Location: admin_accueil.php");
+        } else {
+            header("Location: accueil.php");
+        }
         exit();
     } else {
         // Password is incorrect

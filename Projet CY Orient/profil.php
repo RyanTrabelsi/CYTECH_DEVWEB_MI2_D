@@ -27,13 +27,13 @@ $success = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get user ID from session
     $user_id = $_SESSION['user_id'];
-    
+
     // Prepare update statement based on which field was submitted
     if (isset($_POST['update_name'])) {
         $name = $conn->real_escape_string($_POST['name']);
         $stmt = $conn->prepare("UPDATE users SET name = ? WHERE id = ?");
         $stmt->bind_param("si", $name, $user_id);
-    } 
+    }
     elseif (isset($_POST['update_surname'])) {
         $surname = $conn->real_escape_string($_POST['surname']);
         $stmt = $conn->prepare("UPDATE users SET surname = ? WHERE id = ?");
@@ -64,13 +64,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare("UPDATE users SET date_naissance = ? WHERE id = ?");
         $stmt->bind_param("si", $date_naissance, $user_id);
     }
-    
+
     if (isset($stmt)) {
         if ($stmt->execute()) {
             $message = "Informations mises à jour avec succès!";
             $success = true;
         } else {
             $message = "Erreur lors de la mise à jour: " . $stmt->error;
+        }
+        $stmt->close();
+    }
+
+    // Handle cart/booking actions
+    if (isset($_POST['remove_from_cart'])) {
+        $cart_id = $_POST['cart_id'];
+        $stmt = $conn->prepare("DELETE FROM cart WHERE id = ? AND user_id = ?");
+        $stmt->bind_param("ii", $cart_id, $_SESSION['user_id']);
+        if ($stmt->execute()) {
+            $message = "Article retiré du panier avec succès!";
+            $success = true;
+        }
+        $stmt->close();
+    }
+
+    if (isset($_POST['cancel_booking'])) {
+        $booking_id = $_POST['booking_id'];
+        $stmt = $conn->prepare("UPDATE bookings SET status = 'cancelled' WHERE id = ? AND user_id = ?");
+        $stmt->bind_param("ii", $booking_id, $_SESSION['user_id']);
+        if ($stmt->execute()) {
+            $message = "Réservation annulée avec succès!";
+            $success = true;
         }
         $stmt->close();
     }
@@ -84,6 +107,31 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
+
+// Get user's bookings
+$bookings = [];
+$stmt = $conn->prepare("SELECT b.*, t.destination, t.country, t.image_filename
+                       FROM bookings b
+                       JOIN trips t ON b.trip_id = t.id
+                       WHERE b.user_id = ? AND b.status != 'cancelled'
+                       ORDER BY b.booking_date DESC");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$bookings = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+// Get user's cart items
+$cart_items = [];
+$stmt = $conn->prepare("SELECT c.*, t.destination, t.country, t.image_filename, t.price as unit_price
+                       FROM cart c
+                       JOIN trips t ON c.trip_id = t.id
+                       WHERE c.user_id = ?
+                       ORDER BY c.added_date DESC");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$cart_items = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
 $conn->close();
 ?>
 
@@ -92,7 +140,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>Mon profil</title>
-    <link rel="stylesheet" type="text/css" href="style.css"> 
+    <link rel="stylesheet" type="text/css" href="style.css">
     <style>
         .edit-form {
             display: none;
@@ -108,20 +156,89 @@ $conn->close();
             text-align: center;
             margin: 10px 0;
         }
+
+        /* New styles for bookings and cart */
+        .bookings-section, .cart-section {
+            margin-top: 40px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        .section-title {
+            border-bottom: 2px solid #eaaa37;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .booking-item, .cart-item {
+            display: flex;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .booking-image, .cart-image {
+            width: 150px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 20px;
+        }
+        .booking-details, .cart-details {
+            flex: 1;
+        }
+        .booking-meta, .cart-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .booking-actions, .cart-actions {
+            margin-top: 10px;
+        }
+        .action-btn {
+            padding: 5px 10px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .cancel-btn {
+            background-color: #ff6b6b;
+            color: white;
+        }
+        .remove-btn {
+            background-color: #ff9e4f;
+            color: white;
+        }
+        .checkout-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            margin-top: 20px;
+        }
+        .empty-message {
+            color: #666;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
-    <!-- En-tête -->
+    <!-- Header remains the same -->
     <header class="header">
-        <img src="image/logo.png">
-        <nav class="nav1">
-          <li><a href="accueil.php">Accueil</a></li>
-          <li><a href="presentation.php">Présentation</a></li>
-          <li><a href="reserver.php">Réserver</a></li>
-          <li><a href="profil.php">Mon compte</a></li>
-        </nav>
-        <input type="submit" value="Se déconnecter" name="deconnexion" id="deconnexion" onclick="window.location.href='logout.php';">
-    </header>
+    <img src="image/logo.png">
+    <nav class="nav1">
+        <li><a href="accueil.php">Accueil</a></li>
+        <li><a href="presentation.php">Présentation</a></li>
+        <li><a href="reserver.php">Réserver</a></li>
+        <li><a href="profil.php">Mon compte</a></li>
+    </nav>
+    <?php if(isset($_SESSION['user_id'])): ?>
+        <?php if($_SESSION['contact_type'] === 'admin'): ?>
+            <input type="button" class="admin-button" value="Liste des utilisateurs" onclick="window.location.href='userlist.php';">
+        <?php endif; ?>
+        <input type="submit" value="Se déconnecter" name="logout" id="logout" onclick="window.location.href='logout.php';">
+    <?php endif; ?>
+</header>
 
     <div class="m2">
         <?php if ($message): ?>
@@ -129,7 +246,8 @@ $conn->close();
                 <?php echo $message; ?>
             </div>
         <?php endif; ?>
-        
+
+        <!-- Personal Information Section -->
         <h2>Informations personnelles</h2>
         <p>Mettez à jour vos informations</p>
         <img src="image/pp.png" alt="Image " class="img2">
@@ -193,7 +311,7 @@ $conn->close();
         </div>
 
         <hr class="ligne">
-        
+
         <!-- Contact Info -->
         <div class="m4">
             <nav class="info">
@@ -227,7 +345,7 @@ $conn->close();
                 </form>
             </div>
         </div>
-        
+
         <hr class="ligne">
 
         <!-- Nationalité -->
@@ -247,7 +365,7 @@ $conn->close();
         </div>
 
         <hr class="ligne">
-        
+
         <!-- Date de naissance -->
         <div class="m4">
             <nav class="info">
@@ -265,6 +383,73 @@ $conn->close();
         </div>
 
         <hr class="ligne">
+
+        <!-- Bookings Section -->
+        <div class="bookings-section">
+            <h2 class="section-title">Mes Réservations</h2>
+
+            <?php if (!empty($bookings)): ?>
+                <?php foreach ($bookings as $booking): ?>
+                <div class="booking-item">
+                    <img src="image/trips/<?= htmlspecialchars($booking['image_filename']) ?>" alt="<?= htmlspecialchars($booking['destination']) ?>" class="booking-image">
+                    <div class="booking-details">
+                        <h3><?= htmlspecialchars($booking['destination']) ?>, <?= htmlspecialchars($booking['country']) ?></h3>
+                        <div class="booking-meta">
+                            <span><strong>Date:</strong> <?= date('d/m/Y', strtotime($booking['booking_date'])) ?></span>
+                            <span><strong>Statut:</strong> <?= htmlspecialchars($booking['status']) ?></span>
+                            <span><strong>Adultes:</strong> <?= $booking['adults'] ?></span>
+                            <span><strong>Enfants:</strong> <?= $booking['children'] ?></span>
+                            <span><strong>Total:</strong> <?= number_format($booking['total_price'], 2) ?>€</span>
+                        </div>
+                        <div class="booking-actions">
+                            <form method="post" style="display: inline;">
+                                <input type="hidden" name="booking_id" value="<?= $booking['id'] ?>">
+                                <button type="submit" name="cancel_booking" class="action-btn cancel-btn">Annuler</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="empty-message">Vous n'avez aucune réservation active.</p>
+            <?php endif; ?>
+        </div>
+
+        <!-- Cart Section -->
+        <div class="cart-section">
+            <h2 class="section-title">Mon Panier</h2>
+
+            <?php if (!empty($cart_items)): ?>
+                <?php foreach ($cart_items as $item): ?>
+                <div class="cart-item">
+                    <img src="image/trips/<?= htmlspecialchars($item['image_filename']) ?>" alt="<?= htmlspecialchars($item['destination']) ?>" class="cart-image">
+                    <div class="cart-details">
+                        <h3><?= htmlspecialchars($item['destination']) ?>, <?= htmlspecialchars($item['country']) ?></h3>
+                        <div class="cart-meta">
+                            <span><strong>Prix unitaire:</strong> <?= number_format($item['unit_price'], 2) ?>€</span>
+                            <span><strong>Adultes:</strong> <?= $item['adults'] ?></span>
+                            <span><strong>Enfants:</strong> <?= $item['children'] ?></span>
+                            <span><strong>Total:</strong> <?= number_format($item['total_price'], 2) ?>€</span>
+                            <span><strong>Ajouté le:</strong> <?= date('d/m/Y', strtotime($item['added_date'])) ?></span>
+                        </div>
+                        <div class="cart-actions">
+                            <form method="post" style="display: inline;">
+                                <input type="hidden" name="cart_id" value="<?= $item['id'] ?>">
+                                <button type="submit" name="remove_from_cart" class="action-btn remove-btn">Retirer</button>
+                            </form>
+                            <button onclick="window.location.href='reserver.php?trip_id=<?= $item['trip_id'] ?>'" class="action-btn">Modifier</button>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+
+                <div style="text-align: center;">
+                    <button onclick="window.location.href='checkout.php'" class="checkout-btn">Passer la commande</button>
+                </div>
+            <?php else: ?>
+                <p class="empty-message">Votre panier est vide.</p>
+            <?php endif; ?>
+        </div>
     </div>
 
     <script>

@@ -21,37 +21,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $includes_lunch = isset($_POST['includes_lunch']) ? 1 : 0;
         $includes_dinner = isset($_POST['includes_dinner']) ? 1 : 0;
 
-        try {
-            if (isset($_POST['book_now'])) {
-                // Direct booking
-                $stmt = $pdo->prepare("INSERT INTO bookings (user_id, trip_id, adults, children, total_price, booking_date, status, accommodation_type, includes_breakfast, includes_lunch, includes_dinner) 
-                                      VALUES (?, ?, ?, ?, ?, NOW(), 'confirmed', ?, ?, ?, ?)");
-                $stmt->execute([$user_id, $trip_id, $adults, $children, $total_price, $accommodation_type, $includes_breakfast, $includes_lunch, $includes_dinner]);
-                $_SESSION['booking_success'] = "Votre réservation a été confirmée!";
-            } else {
-                // Add to cart
-                $stmt = $pdo->prepare("INSERT INTO cart (user_id, trip_id, adults, children, total_price, added_date, accommodation_type, includes_breakfast, includes_lunch, includes_dinner) 
-                                      VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?)");
+        // Store booking data in session for the checkout process
+        $_SESSION['pending_booking'] = [
+            'trip_id' => $trip_id,
+            'adults' => $adults,
+            'children' => $children,
+            'total_price' => $total_price,
+            'accommodation_type' => $accommodation_type,
+            'includes_breakfast' => $includes_breakfast,
+            'includes_lunch' => $includes_lunch,
+            'includes_dinner' => $includes_dinner,
+            'action' => isset($_POST['book_now']) ? 'book_now' : 'add_to_cart'
+        ];
+
+        // Redirect to checkout page if booking now
+        if (isset($_POST['book_now'])) {
+            header("Location: checkout.php");
+            exit();
+        } else {
+            // Add to cart directly
+            try {
+                $stmt = $pdo->prepare("INSERT INTO cart (user_id, trip_id, adults, children, total_price, added_date, accommodation_type, includes_breakfast, includes_lunch, includes_dinner)
+                                    VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?)");
                 $stmt->execute([$user_id, $trip_id, $adults, $children, $total_price, $accommodation_type, $includes_breakfast, $includes_lunch, $includes_dinner]);
                 $_SESSION['cart_success'] = "Le voyage a été ajouté à votre panier!";
+                header("Location: reserver.php?trip_id=".$trip_id);
+                exit();
+            } catch (PDOException $e) {
+                error_log("Cart error: " . $e->getMessage());
+                $_SESSION['booking_error'] = "Une erreur s'est produite. Veuillez réessayer.";
             }
-            
-            header("Location: reserver.php?trip_id=".$trip_id);
-            exit();
-        } catch (PDOException $e) {
-            error_log("Booking error: " . $e->getMessage());
-            $_SESSION['booking_error'] = "Une erreur s'est produite. Veuillez réessayer.";
         }
     }
-    
+
     // Handle regular search
-    $search_term = '%' . $_POST['depart'] . '%';
-    try {
-        $stmt = $pdo->prepare("SELECT * FROM trips WHERE destination LIKE ? OR country LIKE ?");
-        $stmt->execute([$search_term, $search_term]);
-        $search_results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        error_log("Search error: " . $e->getMessage());
+    if (isset($_POST['search'])) {
+        $search_term = '%' . $_POST['destination'] . '%';
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM trips WHERE destination LIKE ? OR country LIKE ?");
+            $stmt->execute([$search_term, $search_term]);
+            $search_results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Search error: " . $e->getMessage());
+        }
     }
 }
 
@@ -84,7 +96,7 @@ if (isset($_GET['trip_id'])) {
   <link href="style.css" rel="stylesheet" type="text/css" />
   <style>
     /* Existing styles remain the same */
-    
+
     /* Enhanced Modal Styles */
     .modal {
         display: none;
@@ -192,41 +204,99 @@ if (isset($_GET['trip_id'])) {
         margin: 15px 0;
     }
     /* Add this to your existing CSS */
-.meal-options input[type="checkbox"] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 2px solid #eaaa37;
-    border-radius: 4px;
-    outline: none;
-    cursor: pointer;
-    vertical-align: middle;
-    position: relative;
-    margin-right: 5px;
-}
+    .meal-options input[type="checkbox"] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border: 2px solid #eaaa37;
+        border-radius: 4px;
+        outline: none;
+        cursor: pointer;
+        vertical-align: middle;
+        position: relative;
+        margin-right: 5px;
+    }
 
-.meal-options input[type="checkbox"]:checked {
-    background-color: #eaaa37;
-}
+    .meal-options input[type="checkbox"]:checked {
+        background-color: #eaaa37;
+    }
 
-.meal-options input[type="checkbox"]:checked::after {
-    content: "✓";
-    position: absolute;
-    color: white;
-    font-size: 14px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
+    .meal-options input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        color: white;
+        font-size: 14px;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
 
-.meal-options label {
-    display: inline-flex;
-    align-items: center;
-    margin-right: 20px;
-    cursor: pointer;
-    user-select: none;
+    .meal-options label {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 20px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    /* Modal Image Styling */
+    .trip-image {
+        width: 100%;
+        max-height: 300px; /* Adjust this value as needed */
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .trip-image img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain; /* Ensures the image maintains its aspect ratio */
+    }
+
+    /* Modal Content Layout */
+    .trip-details {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .trip-info {
+        width: 100%;
+        text-align: center;
+    }
+
+    .overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 10px;
+        text-align: center;
+    }
+      
+      div.destination-item {
+  color: #373737;
+  height: 150px;
+  margin: 15px;
+  position: relative;
+  flex: 1 0 29%;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  max-width: 350px
+}
+      section#search-results h2 {
+  padding-top: 50px;
+    text-align: center;
+  opacity: 0.5;
+  color: black;
+  text-align: center;
+  font-family: 'PersiaFont', sans-serif;
 }
   </style>
 </head>
@@ -250,7 +320,7 @@ if (isset($_GET['trip_id'])) {
                 <div class="notification error"><?= $_SESSION['booking_error'] ?></div>
                 <?php unset($_SESSION['booking_error']); ?>
             <?php endif; ?>
-            
+
             <div class="trip-details">
                 <div class="trip-image">
                     <img src="image/trips/<?= htmlspecialchars($trip_details['image_filename']) ?>" alt="<?= htmlspecialchars($trip_details['destination']) ?>">
@@ -258,7 +328,7 @@ if (isset($_GET['trip_id'])) {
                 <div class="trip-info">
                     <h2><?= htmlspecialchars($trip_details['destination']) ?>, <?= htmlspecialchars($trip_details['country']) ?></h2>
                     <p><?= htmlspecialchars($trip_details['description']) ?></p>
-                    
+
                     <div class="trip-meta">
                         <?php if (!empty($trip_details['departure_city'])): ?>
                             <p><strong>Départ de:</strong> <?= htmlspecialchars($trip_details['departure_city']) ?></p>
@@ -270,11 +340,11 @@ if (isset($_GET['trip_id'])) {
                             <p><strong>Compagnie aérienne:</strong> <?= htmlspecialchars($trip_details['airline']) ?></p>
                         <?php endif; ?>
                     </div>
-                    
+
                     <!-- Booking Form -->
                     <form method="post" class="booking-form">
                         <input type="hidden" name="trip_id" value="<?= $trip_details['id'] ?>">
-                        
+
                         <div class="form-row">
                             <label for="adults">Adultes:</label>
                             <select name="adults" id="adults" onchange="calculatePrice()">
@@ -283,14 +353,14 @@ if (isset($_GET['trip_id'])) {
                                 <?php endfor; ?>
                             </select>
                         </div>
-                        
+
                         <div class="form-row">
                             <label for="children">Enfants:</label>
                             <select name="children" id="children" onchange="calculatePrice()">
                                 <?php for($i=0; $i<=10; $i++): ?>
                                     <option value="<?= $i ?>"><?= $i ?></option>
                                 <?php endfor; ?>
-                                </select>
+                            </select>
                         </div>
 
                         <div class="accommodation-options">
@@ -318,7 +388,7 @@ if (isset($_GET['trip_id'])) {
                                 <input type="checkbox" name="includes_dinner" value="1"> Dîner
                             </label>
                         </div>
-                        
+
                         <div class="price-summary">
                             <div class="price-row">
                                 <span>Prix par adulte:</span>
@@ -334,7 +404,7 @@ if (isset($_GET['trip_id'])) {
                             </div>
                             <input type="hidden" name="total_price" id="total-price-value" value="<?= $trip_details['price'] ?>">
                         </div>
-                        
+
                         <div class="action-buttons">
                             <button type="submit" name="add_to_cart" class="add-to-cart">Ajouter au panier</button>
                             <button type="submit" name="book_now" class="book-now">Réserver maintenant</button>
@@ -369,44 +439,31 @@ if (isset($_GET['trip_id'])) {
 </header>
     <video id="background-video" autoplay loop muted>
       <source src="image/back.mp4" type="video/mp4">
-    </video> 
+    </video>
     <div class="landing-page">
       <h1 class="big-title">Réservez dés maintenant parmi nos centaines d'offres</h1>
     </div>
     <div class="forms">
     <form method="post">
-      <div class="select1">
-      <select name="ar" id="ar">
-        <option selected="selected">Aller-Retour</option>
-        <option>Aller simple</option>
-        <option>Multidestinations</option>
-      </select>
-      </div>
       <div class="form-group">
-      <label for="provenance">De</label>
-      <input type="text" name="provenance" id="provenance" placeholder="Oujda,Djerba,...">
-      <label for="depart">À</label>
-      <input type="text" name="depart" id="depart" placeholder="Mascate,Algérie,..." required>
-      <label for="aller">Du</label>
-      <input type="date" name="aller" id="aller" placeholder="05/02/2025">
-      <label for="retour">Au</label>
-      <input type="date" name="retour" id="retour" placeholder="10/02/2025">
+        <label for="destination">Destination:</label>
+        <input type="text" name="destination" id="destination" placeholder="Mascate, Algérie, ..." required>
       </div>
       <div class="form-submit">
-      <button type="submit" name="recherche" id="recherche">Lancer la recherche</button>
-    </div>
+        <button type="submit" name="search">Lancer la recherche</button>
+      </div>
     </form>
     </div>
   </section>
 
   <!-- Search Results Section -->
-  <?php if (!empty($_POST)): ?>
+  <?php if (isset($search_results)): ?>
   <section id="search-results" class="search-results">
-    <h2>Résultats pour "<?= htmlspecialchars($_POST['depart']) ?>"</h2>
+    <h2>Résultats pour "<?= htmlspecialchars($_POST['destination']) ?>"</h2>
     <div class="destinations-group">
       <?php if (!empty($search_results)): ?>
         <?php foreach ($search_results as $trip): ?>
-        <div class="destination-item" 
+        <div class="destination-item"
              style="background-image: url('image/trips/<?= htmlspecialchars($trip['image_filename']) ?>')"
              onclick="window.location.href='reserver.php?trip_id=<?= $trip['id'] ?>'">
             <div class="overlay">
@@ -417,7 +474,7 @@ if (isset($_GET['trip_id'])) {
         </div>
         <?php endforeach; ?>
       <?php else: ?>
-        <p class="no-results">Aucun voyage trouvé pour "<?= htmlspecialchars($_POST['depart']) ?>"</p>
+        <p class="no-results">Aucun voyage trouvé pour "<?= htmlspecialchars($_POST['destination']) ?>"</p>
       <?php endif; ?>
     </div>
   </section>
@@ -428,7 +485,7 @@ if (isset($_GET['trip_id'])) {
     <h2>Destinations populaires</h2>
     <div class="destinations-group">
       <?php foreach ($random_trips as $trip): ?>
-      <div class="destination-item" 
+      <div class="destination-item"
            style="background-image: url('image/trips/<?= htmlspecialchars($trip['image_filename']) ?>')"
            onclick="window.location.href='reserver.php?trip_id=<?= $trip['id'] ?>'">
           <div class="overlay">
@@ -471,7 +528,7 @@ if (isset($_GET['trip_id'])) {
         const adults = parseInt(document.getElementById('adults').value);
         const children = parseInt(document.getElementById('children').value);
         const total = (adultPrice * adults) + (childPrice * children);
-        
+
         document.getElementById('total-price').textContent = total.toFixed(0) + '€';
         document.getElementById('total-price-value').value = total;
     }

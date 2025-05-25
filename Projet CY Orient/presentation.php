@@ -10,7 +10,13 @@ session_start();
   <title>CY-Orient</title>
   <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
-
+<style>
+    .image-container {
+    margin: 0 auto;
+    display: block;
+    }
+    </style>
+    
 <body>
   <section class="top-page">
     <header class="header">
@@ -44,33 +50,8 @@ session_start();
     <div class="introduction">
       <h2 class="intro">CY Orient est une agence de voyage qui vous permet de voyager les pays de la péninsule Arabique, de l'Afrique du Nord et du Proche-Orient de manière exclusive, Découvrez avec nous les vingt-et-un pays du monde arabe</h1>
     </div>
-    <div class="forms1">
-    <form method="post">
-      <div class="select1">
-      <select name="ar" id="ar">
-        <option selected="selected">Aller-Retour</option>
-        <option>Aller simple</option>
-        <option>Multidestinations</option>
-      </select>
-      </div>
-      <div class="form-group">
-      <label for=provenance>De</label>
-      <input type=texte name=provenance id=provenance placeholder="Oujda,Djerba,...">
-      <label for=arrivee>À</label>
-      <input type=texte name=depart id=depart placeholder="Mascate,LeCaire,...">
-      <label for=arrivee>Du</label>
-      <input type=date name=aller id=aller placeholder="05/02/2025">
-      <label for=retour>Au</label>
-      <input type=date name=retour id=retour placeholder="10/02/2025">
-      </div>
-      <div class="form-submit">
-      <input type="submit" value="Lancer la recherche" name="recherche" id="recherche">
-    </div>
-    </form>
-  </div>
-   
-
-    <div class="image-container">
+    
+    <div class="image-container" style="margin: 0 auto; display: block;">
       <img src="image/carte.png">
     
       <div class="hotspot zone1">

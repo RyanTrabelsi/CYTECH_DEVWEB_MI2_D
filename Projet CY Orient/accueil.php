@@ -22,26 +22,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $includes_lunch = isset($_POST['includes_lunch']) ? 1 : 0;
         $includes_dinner = isset($_POST['includes_dinner']) ? 1 : 0;
 
-        try {
-            if (isset($_POST['book_now'])) {
-                // Direct booking
-                $stmt = $pdo->prepare("INSERT INTO bookings (user_id, trip_id, adults, children, total_price, booking_date, status, accommodation_type, includes_breakfast, includes_lunch, includes_dinner)
-                                      VALUES (?, ?, ?, ?, ?, NOW(), 'confirmed', ?, ?, ?, ?)");
-                $stmt->execute([$user_id, $trip_id, $adults, $children, $total_price, $accommodation_type, $includes_breakfast, $includes_lunch, $includes_dinner]);
-                $_SESSION['booking_success'] = "Votre réservation a été confirmée!";
-            } else {
-                // Add to cart
+        // Store booking data in session for the checkout process
+        $_SESSION['pending_booking'] = [
+            'trip_id' => $trip_id,
+            'adults' => $adults,
+            'children' => $children,
+            'total_price' => $total_price,
+            'accommodation_type' => $accommodation_type,
+            'includes_breakfast' => $includes_breakfast,
+            'includes_lunch' => $includes_lunch,
+            'includes_dinner' => $includes_dinner,
+            'action' => isset($_POST['book_now']) ? 'book_now' : 'add_to_cart'
+        ];
+
+        // Redirect to checkout page if booking now
+        if (isset($_POST['book_now'])) {
+            header("Location: checkout.php");
+            exit();
+        } else {
+            // Add to cart directly
+            try {
                 $stmt = $pdo->prepare("INSERT INTO cart (user_id, trip_id, adults, children, total_price, added_date, accommodation_type, includes_breakfast, includes_lunch, includes_dinner)
                                       VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?)");
                 $stmt->execute([$user_id, $trip_id, $adults, $children, $total_price, $accommodation_type, $includes_breakfast, $includes_lunch, $includes_dinner]);
                 $_SESSION['cart_success'] = "Le voyage a été ajouté à votre panier!";
+                header("Location: accueil.php?trip_id=".$trip_id);
+                exit();
+            } catch (PDOException $e) {
+                error_log("Cart error: " . $e->getMessage());
+                $_SESSION['booking_error'] = "Une erreur s'est produite. Veuillez réessayer.";
             }
-
-            header("Location: accueil.php?trip_id=".$trip_id);
-            exit();
-        } catch (PDOException $e) {
-            error_log("Booking error: " . $e->getMessage());
-            $_SESSION['booking_error'] = "Une erreur s'est produite. Veuillez réessayer.";
         }
     }
 }
@@ -348,6 +358,34 @@ if (isset($_GET['trip_id'])) {
             margin-right: 20px;
             cursor: pointer;
             user-select: none;
+        }
+
+        /* Modal Image Styling */
+        .trip-image {
+            width: 100%;
+            max-height: 300px; /* Adjust this value as needed */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .trip-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Ensures the image maintains its aspect ratio */
+        }
+
+        /* Modal Content Layout */
+        .trip-details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .trip-info {
+            width: 100%;
+            text-align: center;
         }
     </style>
 </head>

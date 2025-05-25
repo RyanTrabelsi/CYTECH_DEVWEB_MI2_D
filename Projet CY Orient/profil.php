@@ -384,7 +384,9 @@ $conn->close();
         <input type="submit" value="Se déconnecter" name="logout" id="logout" onclick="window.location.href='logout.php';">
     <?php endif; ?>
 </header>
-
+    <video id="background-video" autoplay loop muted>
+      <source src="image/back.mp4" type="video/mp4">
+    </video>
     <div class="m2">
         <?php if ($message): ?>
             <div class="<?php echo $success ? 'success-message' : 'error-message'; ?>">

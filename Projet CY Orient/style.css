@@ -194,87 +194,112 @@ header.header input{
 
 
 /* Formulaire de recherche*/
-.forms{
+/* Search Form Container */
+.forms, .forms1 {
   display: flex;
-  background-color: #eaaa37;
+  background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent white */
   justify-content: center;
-  margin-right: 50px;
-  margin-left: 50px;
-  padding: 10px;
-  border-radius:20px;
-}
-.forms1{
-  display: flex;
-  background-color: #eaaa37;
-  justify-content: center;
-  margin-right: 150px;
-  margin-left: 150px;
-  padding: 10px;
-  border-radius:20px;
-}
-.select1{
-  display: flex;
-  justify-content: left;
-  padding: 10px;
-  flex-direction: row;
-  border:none;
-  
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 15px;
+  max-width: 900px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px); /* Frosted glass effect */
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.select1 select{
-  appearance: none; /* Supprime le style par défaut */
-  background-color: #f8f8f8; /* Fond clair */
-  border: 2px solid #3498db; /* Bordure bleue */
-  border-radius: 10px; /* Coins arrondis */
-  padding: 5px; /* Espacement interne */
-  font-size: inherit; /* Garde la taille du texte d'origine */
+/* Form elements container */
+.form-group {
+  display: flex;
+  align-items: center;
+  margin: 0 10px;
+}
 
+/* Labels */
+.form-group label {
+  margin-right: 8px;
+  font-weight: 500;
   color: #333;
+  font-size: 14px;
 }
 
-
-.form-group{
-  justify-content: center;
-  flex-direction: row;
-}
-.form-group select, input, option{
-  appearance: none; /* Supprime le style par défaut */
-  background-color: #f8f8f8; /* Fond clair */
-  border: 2px solid #3498db;  /* Bordure bleue */
-  border-radius: 10px; /* Coins arrondis */
-  padding: 5px; /* Espacement interne */
-  font-size: inherit; /* Garde la taille du texte d'origine */
+/* Select and input fields */
+.form-group select, 
+.form-group input, 
+.form-group option,
+.select1 select {
+  appearance: none;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 14px;
   color: #333;
-}
-.form-group label{
-  margin: 5px;
-  padding: 5px;
-}
-
-.form-submit{
-  text-align: center;
-  padding: 10px; 
-}
-
-.form-submit input{
-  font-family: 'PersiaFont', sans-serif;
-  background: linear-gradient(45deg, #9d3f3a, #cc175c93);
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  font-size: 18px;
-  border-radius: 50px;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 }
 
-
-.form-submit input:hover{
-  transform:scale(1.1);
-  transition: 0.3s all;
+/* Hover state for inputs */
+.form-group select:hover, 
+.form-group input:hover {
+  border-color: #3498db;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
 }
 
+/* Focus state for inputs */
+.form-group select:focus, 
+.form-group input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+/* Submit button */
+.form-submit {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.form-submit input {
+  font-family: 'PersiaFont', sans-serif;
+  background: linear-gradient(45deg, #9d3f3a, #cc175c);
+  border: none;
+  color: white;
+  padding: 12px 28px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.form-submit input:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(45deg, #8d2f2a, #bb0f52);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .forms, .forms1 {
+    flex-direction: column;
+    margin: 20px;
+    padding: 15px;
+  }
+  
+  .form-group {
+    margin: 8px 0;
+    width: 100%;
+  }
+  
+  .form-group select, 
+  .form-group input {
+    width: 100%;
+  }
+}
 /*Destination*/
 .overlay { 
   position: absolute;
@@ -321,6 +346,7 @@ div.destination-item {
   flex: 1 0 29%;
   background-repeat: no-repeat;
   background-size: 100%;
+  max-width: 350px
 }
 
 div.destination-item:hover {
@@ -334,6 +360,101 @@ div.destinations-group {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
+  gap: 20px; /* Adds consistent spacing between items */
+  padding: 20px 0;
+}
+/* Search Results Section - Make identical to destinations section */
+section#search-results {
+  margin: 0px 20% 0 20%;
+}
+
+section#search-results h2 {
+  padding-top: 50px;
+    text-align: center;
+  opacity: 0.5;
+  color: #373737;
+  text-align: center;
+  font-family: 'PersiaFont', sans-serif;
+}
+
+.no-results {
+  text-align: center;
+  color: #373737;
+  font-family: 'PersiaFont', sans-serif;
+  width: 100%;
+}
+
+/* Ensure search results items use the same styling as destination items */
+.destination-item {
+  color: #373737;
+  height: 250px; /* Increased height for better proportions */
+  width: 100%;
+  max-width: 350px; /* Maximum width for each item */
+  min-width: 280px; /* Minimum width to prevent awkwardly narrow items */
+  margin: 0; /* Remove individual margins since we're using gap now */
+  position: relative;
+  flex: 1 0 calc(33.333% - 40px); /* Flex basis accounting for gap */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px; /* Added rounded corners */
+  overflow: hidden; /* Ensures rounded corners work */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#search-results .destination-item {
+  height: 250px;
+  max-width: 350px;
+  min-width: 280px;
+  flex: 1 0 calc(33.333% - 40px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .destination-item,
+  #search-results .destination-item {
+    flex: 1 0 calc(50% - 30px); /* 2 columns on medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .destination-item,
+  #search-results .destination-item {
+    flex: 1 0 100%; /* 1 column on small screens */
+    max-width: 100%;
+  }
+}
+
+#search-results .destination-item:hover {
+  transform: scale(0.98);
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.6), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  transition: 0.2s all;
+}
+
+#search-results .overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+#search-results .overlay .nom {
+  font-family: 'PersiaFont', sans-serif;
+  display: block;
+}
+
+#search-results .overlay .prix {
+  display: block;
+}
+.no-results {
+  text-align: center;
+  color: #373737;
+  font-family: 'PersiaFont', sans-serif;
+  width: 100%;
 }
 
 .oujda { background: url(image/oujda.jpg); }

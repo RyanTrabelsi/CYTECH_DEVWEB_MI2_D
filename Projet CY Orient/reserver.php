@@ -16,19 +16,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $children = $_POST['children'];
         $total_price = $_POST['total_price'];
         $user_id = $_SESSION['user_id'];
+        $accommodation_type = $_POST['accommodation_type'];
+        $includes_breakfast = isset($_POST['includes_breakfast']) ? 1 : 0;
+        $includes_lunch = isset($_POST['includes_lunch']) ? 1 : 0;
+        $includes_dinner = isset($_POST['includes_dinner']) ? 1 : 0;
 
         try {
             if (isset($_POST['book_now'])) {
                 // Direct booking
-                $stmt = $pdo->prepare("INSERT INTO bookings (user_id, trip_id, adults, children, total_price, booking_date, status) 
-                                      VALUES (?, ?, ?, ?, ?, NOW(), 'confirmed')");
-                $stmt->execute([$user_id, $trip_id, $adults, $children, $total_price]);
+                $stmt = $pdo->prepare("INSERT INTO bookings (user_id, trip_id, adults, children, total_price, booking_date, status, accommodation_type, includes_breakfast, includes_lunch, includes_dinner) 
+                                      VALUES (?, ?, ?, ?, ?, NOW(), 'confirmed', ?, ?, ?, ?)");
+                $stmt->execute([$user_id, $trip_id, $adults, $children, $total_price, $accommodation_type, $includes_breakfast, $includes_lunch, $includes_dinner]);
                 $_SESSION['booking_success'] = "Votre réservation a été confirmée!";
             } else {
                 // Add to cart
-                $stmt = $pdo->prepare("INSERT INTO cart (user_id, trip_id, adults, children, total_price, added_date) 
-                                      VALUES (?, ?, ?, ?, ?, NOW())");
-                $stmt->execute([$user_id, $trip_id, $adults, $children, $total_price]);
+                $stmt = $pdo->prepare("INSERT INTO cart (user_id, trip_id, adults, children, total_price, added_date, accommodation_type, includes_breakfast, includes_lunch, includes_dinner) 
+                                      VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?)");
+                $stmt->execute([$user_id, $trip_id, $adults, $children, $total_price, $accommodation_type, $includes_breakfast, $includes_lunch, $includes_dinner]);
                 $_SESSION['cart_success'] = "Le voyage a été ajouté à votre panier!";
             }
             
@@ -174,6 +178,56 @@ if (isset($_GET['trip_id'])) {
         background: #f8d7da;
         color: #721c24;
     }
+    .meal-options {
+        margin: 15px 0;
+        padding: 15px;
+        background: #f5f5f5;
+        border-radius: 8px;
+    }
+    .meal-options label {
+        margin-right: 15px;
+        cursor: pointer;
+    }
+    .accommodation-options {
+        margin: 15px 0;
+    }
+    /* Add this to your existing CSS */
+.meal-options input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #eaaa37;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    vertical-align: middle;
+    position: relative;
+    margin-right: 5px;
+}
+
+.meal-options input[type="checkbox"]:checked {
+    background-color: #eaaa37;
+}
+
+.meal-options input[type="checkbox"]:checked::after {
+    content: "✓";
+    position: absolute;
+    color: white;
+    font-size: 14px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.meal-options label {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 20px;
+    cursor: pointer;
+    user-select: none;
+}
   </style>
 </head>
 
@@ -236,7 +290,33 @@ if (isset($_GET['trip_id'])) {
                                 <?php for($i=0; $i<=10; $i++): ?>
                                     <option value="<?= $i ?>"><?= $i ?></option>
                                 <?php endfor; ?>
+                                </select>
+                        </div>
+
+                        <div class="accommodation-options">
+                            <h3>Type d'hébergement:</h3>
+                            <select name="accommodation_type" id="accommodation_type" class="form-control">
+                                <option value="hotel">Hôtel</option>
+                                <option value="apartment">Appartement</option>
+                                <option value="villa">Villa</option>
+                                <option value="resort">Résidence de vacances</option>
+                                <option value="hostel">Auberge de jeunesse</option>
+                                <option value="guesthouse">Maison d'hôtes</option>
+                                <option value="bungalow">Bungalow</option>
                             </select>
+                        </div>
+
+                        <div class="meal-options">
+                            <h3>Options de repas:</h3>
+                            <label>
+                                <input type="checkbox" name="includes_breakfast" value="1" checked> Petit-déjeuner
+                            </label>
+                            <label>
+                                <input type="checkbox" name="includes_lunch" value="1"> Déjeuner
+                            </label>
+                            <label>
+                                <input type="checkbox" name="includes_dinner" value="1"> Dîner
+                            </label>
                         </div>
                         
                         <div class="price-summary">
@@ -267,7 +347,6 @@ if (isset($_GET['trip_id'])) {
         <?php endif; ?>
     </div>
   </div>
-
   <!-- Rest of your original content remains exactly the same -->
   <section class="top-page">
     <header class="header">
